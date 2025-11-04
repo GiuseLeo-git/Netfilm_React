@@ -6,6 +6,12 @@ export async function getTodos(limit = 2) {
   return res.json();
 }
 
+export async function getPosts(limit = 100) {
+  const res = await fetch(`${BASE}/posts?_limit=${limit}`);
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  return res.json();
+}
+
 
 // export async function createTodo(payload) { ... }
 // export async function updateTodo(id, payload) { ... }

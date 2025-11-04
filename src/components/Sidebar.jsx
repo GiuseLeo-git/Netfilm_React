@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { logout } from '../utils/auth';
+import logoutImg from '../assets/logout.png';
 
 export default function Sidebar({ isOpen, onToggle }) {
   const navigate = useNavigate();
@@ -69,7 +70,12 @@ export default function Sidebar({ isOpen, onToggle }) {
             className="sidebar-logout"
             onClick={handleLogout}
           >
-            <span className="sidebar-icon">🚪</span>
+            <img 
+              src={logoutImg} 
+              alt="Esci" 
+              className="sidebar-icon"
+              style={{ width: '32px', height: '32px' }}
+            />
             <span className="sidebar-label">Esci</span>
           </button>
         </div>
