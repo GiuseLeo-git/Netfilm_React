@@ -12,10 +12,10 @@ export default function Sidebar({ isOpen, onToggle }) {
   const setIsOpen = onToggle || setInternalIsOpen;
 
   const menuItems = [
-    { path: '/app/films', label: 'Lista Film', icon: '🎬' },
-    { path: '/app/preferiti', label: 'Preferiti', icon: '❤️' },
-    { path: '/app/todos', label: 'Lista Dati JSONPlaceholder', icon: '📋' },
-    { path: '/app/profilo', label: 'Profilo', icon: '👤' },
+    { path: '/home/films', label: 'Lista Film', icon: '🎬' },
+    { path: '/home/preferiti', label: 'Preferiti', icon: '❤️' },
+    { path: '/home/todos', label: 'Lista Dati JSONPlaceholder', icon: '📋' },
+    { path: '/home/profilo', label: 'Profilo', icon: '👤' },
   ];
 
   const handleNavigate = (path) => {
@@ -42,6 +42,15 @@ export default function Sidebar({ isOpen, onToggle }) {
 
       {/* Sidebar */}
       <aside className={`sidebar ${actualIsOpen ? 'open' : ''}`}>
+        <div className="sidebar-header">
+          <button
+            className="sidebar-close"
+            onClick={() => setIsOpen(false)}
+            aria-label="Chiudi menu"
+          >
+            <span style={{ fontSize: '28px', color: '#fff', lineHeight: '1' }}>×</span>
+          </button>
+        </div>
         <nav className="sidebar-nav">
           {menuItems.map((item) => (
             <button

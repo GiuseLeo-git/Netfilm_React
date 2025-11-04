@@ -19,7 +19,7 @@ export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  if (isAuthenticated()) return <Navigate to="/app" replace />;
+  if (isAuthenticated()) return <Navigate to="/home/films" replace />;
 
   const handleLogin = (e) => {
     e.preventDefault();
@@ -33,7 +33,7 @@ export default function Login() {
 
     try {
       login(loginEmail.trim(), loginPassword.trim());
-      navigate('/app');
+      navigate('/home/films');
     } catch (err) {
       setError(err.message || 'Errore durante il login');
     }
@@ -58,7 +58,7 @@ export default function Login() {
       register(nome.trim(), cognome.trim(), email.trim(), password.trim());
       setSuccess('Registrazione completata! Reindirizzamento...');
       setTimeout(() => {
-        navigate('/app');
+        navigate('/home/films');
       }, 1000);
     } catch (err) {
       setError(err.message || 'Errore durante la registrazione');
@@ -69,7 +69,7 @@ export default function Login() {
     <div className="login-container">
       <div className="login-card">
         <div className="login-logo">
-          <Logo size="large" />
+          <Logo size="large" animate={false} />
         </div>
         <h1 className="login-title">{isRegisterMode ? 'Registrati' : 'Accedi'}</h1>
 

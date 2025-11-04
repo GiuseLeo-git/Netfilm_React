@@ -12,13 +12,9 @@ export default function SplashScreen() {
     setTimeout(() => {
       setIsFading(true);
       
-      // Dopo la dissolvenza, naviga alla pagina principale
+      // Dopo la dissolvenza, naviga alla pagina Home
       setTimeout(() => {
-        if (isAuthenticated()) {
-          navigate('/app/films', { replace: true });
-        } else {
-          navigate('/login', { replace: true });
-        }
+        navigate('/home', { replace: true });
       }, 800); // Durata della dissolvenza (0.8s)
     }, 300); // Piccolo delay prima della dissolvenza
   };
@@ -26,7 +22,7 @@ export default function SplashScreen() {
   return (
     <div className={`splash-screen ${isFading ? 'fade-out' : ''}`}>
       <div className="splash-content">
-        <Logo size="xlarge" onAnimationComplete={handleAnimationComplete} />
+        <Logo size="xlarge" animate={true} onAnimationComplete={handleAnimationComplete} />
       </div>
     </div>
   );

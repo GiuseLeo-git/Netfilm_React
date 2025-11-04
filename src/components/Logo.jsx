@@ -13,7 +13,7 @@ const playTriangle = 'M219.18,500.46v79.07l61.7-31.76a8.74,8.74,0,0,0,0-15.54Z';
 // Convertito in percentuale per il viewBox
 const textOffsetPercent = (16.81 / 1080) * 100; // Circa 1.56% del viewBox
 
-export default function Logo({ size = 'normal', onAnimationComplete }) {
+export default function Logo({ size = 'normal', onAnimationComplete, animate = false }) {
   const svgRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const bar1Ref = useRef(null); // Prima barra (rimane ferma)
@@ -27,6 +27,20 @@ export default function Logo({ size = 'normal', onAnimationComplete }) {
     const bar2 = bar2Ref.current;
     const textGroup = textGroupRef.current;
     if (!bar1 || !bar2 || !textGroup) return;
+
+    // Se l'animazione è disabilitata, mostra lo stato Play statico
+    if (!animate) {
+      // Sposta la prima barra a sinistra (come nello stato Play)
+      const bar1OffsetX = 16.81;
+      const bar1OffsetPercent = (bar1OffsetX / 1080) * 100;
+      bar1.setAttribute('d', pauseBar1);
+      bar1.style.transform = `translate(-${bar1OffsetPercent}%, 0)`;
+      // Mostra il triangolo Play invece della seconda barra
+      bar2.setAttribute('d', playTriangle);
+      // Sposta il testo NETFILM a destra
+      textGroup.style.transform = `translate(${textOffsetPercent}%, 0)`;
+      return;
+    }
 
     // Se l'animazione è già stata eseguita, non rifarla
     if (hasAnimatedRef.current) return;
@@ -111,7 +125,7 @@ export default function Logo({ size = 'normal', onAnimationComplete }) {
         cancelAnimationFrame(animationFrameRef.current);
       }
     };
-  }, [onAnimationComplete]);
+  }, [onAnimationComplete, animate]);
 
   const sizeStyles = {
     small: { width: '80px', height: 'auto' },
