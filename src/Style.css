@@ -5,8 +5,8 @@
 }
 
 :root {
-  --netfilm-red: #e50914;
-  --netfilm-red-hover: #f40612;
+  --netfilm-red: #e3b23c;
+  --netfilm-red-hover: #f0c050;
   --netfilm-black: #141414;
   --netfilm-dark: #1a1a1a;
   --netfilm-gray: #2f2f2f;
@@ -76,6 +76,17 @@ input {
   margin-top: 8px;
 }
 
+/* Successo */
+.success-message {
+  color: #4caf50;
+  font-size: 14px;
+  margin-top: 8px;
+  padding: 8px 12px;
+  background-color: rgba(76, 175, 80, 0.1);
+  border-radius: 4px;
+  border: 1px solid rgba(76, 175, 80, 0.3);
+}
+
 /* Pulsanti stile Netflix */
 button {
   background-color: var(--netfilm-red);
@@ -131,29 +142,100 @@ a:hover {
   color: var(--netfilm-red-hover);
 }
 
-/* Header stile Netflix */
-.netfilm-header {
-  background: linear-gradient(180deg, rgba(0, 0, 0, 0.7) 0%, transparent 100%);
-  padding: 20px 40px;
+/* Navbar */
+.navbar {
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.7) 100%);
+  padding: 15px 40px;
   position: sticky;
   top: 0;
   z-index: 100;
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  width: 100%;
+}
+
+.navbar-hamburger {
+  width: 45px;
+  height: 45px;
+  background-color: var(--netfilm-dark);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  padding: 12px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.navbar-hamburger:hover {
+  background-color: var(--netfilm-gray);
+  border-color: var(--netfilm-red);
+}
+
+.navbar-user {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
 }
 
 .netfilm-logo {
-  font-size: 32px;
-  font-weight: 900;
-  color: var(--netfilm-red);
-  letter-spacing: -1px;
-  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.animated-logo {
+  display: inline-block;
+}
+
+/* Splash Screen */
+.splash-screen {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--netfilm-black) 0%, var(--netfilm-dark) 100%);
+  position: relative;
+  overflow: hidden;
+  opacity: 1;
+  transition: opacity 0.8s ease-in-out;
+}
+
+.splash-screen.fade-out {
+  opacity: 0;
+}
+
+.splash-screen::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    radial-gradient(circle at 20% 50%, rgba(227, 178, 60, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(227, 178, 60, 0.1) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.splash-content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* Hero section */
 .hero-section {
-  background: linear-gradient(135deg, rgba(20, 20, 20, 0.9) 0%, rgba(229, 9, 20, 0.3) 100%);
+  background: linear-gradient(135deg, rgba(20, 20, 20, 0.9) 0%, rgba(227, 178, 60, 0.3) 100%);
   padding: 80px 40px;
   text-align: center;
   margin-bottom: 40px;
@@ -163,7 +245,7 @@ a:hover {
   font-size: 48px;
   font-weight: 900;
   margin-bottom: 20px;
-  background: linear-gradient(90deg, #ffffff 0%, #e50914 100%);
+  background: linear-gradient(90deg, #ffffff 0%, #e3b23c 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -188,7 +270,7 @@ a:hover {
 
 .film-card:hover {
   transform: scale(1.05);
-  box-shadow: 0 8px 16px rgba(229, 9, 20, 0.3);
+  box-shadow: 0 8px 16px rgba(227, 178, 60, 0.3);
   border-color: var(--netfilm-red);
 }
 
@@ -238,8 +320,8 @@ a:hover {
   right: 0;
   bottom: 0;
   background: 
-    radial-gradient(circle at 20% 50%, rgba(229, 9, 20, 0.1) 0%, transparent 50%),
-    radial-gradient(circle at 80% 80%, rgba(229, 9, 20, 0.1) 0%, transparent 50%);
+    radial-gradient(circle at 20% 50%, rgba(227, 178, 60, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(227, 178, 60, 0.1) 0%, transparent 50%);
   pointer-events: none;
 }
 
@@ -256,12 +338,11 @@ a:hover {
 }
 
 .login-logo {
-  font-size: 48px;
-  font-weight: 900;
-  color: var(--netfilm-red);
   text-align: center;
   margin-bottom: 32px;
-  letter-spacing: -2px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .login-title {
@@ -357,17 +438,20 @@ a:hover {
 
 /* Layout App */
 .app-layout {
-  display: flex;
   min-height: 100vh;
   background-color: var(--netfilm-black);
+}
+
+.app-content-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 }
 
 .app-content {
   flex: 1;
   display: flex;
   flex-direction: column;
-  margin-left: 0;
-  transition: margin-left 0.3s ease;
 }
 
 .main-content {
@@ -388,49 +472,13 @@ a:hover {
   padding: 0 20px;
 }
 
-/* Hamburger Button */
-.hamburger-button {
-  position: fixed;
-  top: 20px;
-  left: 20px;
-  z-index: 1001;
-  width: 50px;
-  height: 50px;
-  background-color: var(--netfilm-dark);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 8px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 6px;
-  padding: 12px;
-  transition: all 0.3s ease;
-}
-
-.hamburger-button:hover {
-  background-color: var(--netfilm-gray);
-  border-color: var(--netfilm-red);
-}
-
+/* Hamburger Line (usato nella navbar) */
 .hamburger-line {
   width: 24px;
   height: 3px;
   background-color: var(--netfilm-white);
   border-radius: 2px;
   transition: all 0.3s ease;
-}
-
-.hamburger-line.open:nth-child(1) {
-  transform: rotate(45deg) translate(8px, 8px);
-}
-
-.hamburger-line.open:nth-child(2) {
-  opacity: 0;
-}
-
-.hamburger-line.open:nth-child(3) {
-  transform: rotate(-45deg) translate(8px, -8px);
 }
 
 /* Sidebar Overlay */
@@ -466,42 +514,11 @@ a:hover {
   transform: translateX(0);
 }
 
-.sidebar-header {
-  padding: 24px 20px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.sidebar-header .netfilm-logo {
-  font-size: 24px;
-}
-
-.sidebar-close {
-  width: 32px;
-  height: 32px;
-  background-color: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 4px;
-  color: var(--netfilm-white);
-  font-size: 24px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
-  transition: all 0.2s ease;
-}
-
-.sidebar-close:hover {
-  background-color: var(--netfilm-gray);
-  border-color: var(--netfilm-red);
-}
-
 .sidebar-nav {
   flex: 1;
   padding: 20px 0;
   overflow-y: auto;
+  margin-top: 20px;
 }
 
 .sidebar-item {
@@ -521,12 +538,12 @@ a:hover {
 }
 
 .sidebar-item:hover {
-  background-color: rgba(229, 9, 20, 0.1);
+  background-color: rgba(227, 178, 60, 0.1);
   border-left-color: var(--netfilm-red);
 }
 
 .sidebar-item.active {
-  background-color: rgba(229, 9, 20, 0.2);
+  background-color: rgba(227, 178, 60, 0.2);
   border-left-color: var(--netfilm-red);
   color: var(--netfilm-red);
   font-weight: 600;
@@ -594,8 +611,14 @@ a:hover {
     padding: 20px;
   }
   
-  .netfilm-header {
-    padding: 16px 20px;
+  .navbar {
+    padding: 12px 20px;
+    gap: 12px;
+  }
+
+  .navbar-hamburger {
+    width: 40px;
+    height: 40px;
   }
 
   .sidebar {

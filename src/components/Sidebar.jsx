@@ -2,16 +2,20 @@ import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { logout } from '../utils/auth';
 
-export default function Sidebar() {
-  const [isOpen, setIsOpen] = useState(false);
+export default function Sidebar({ isOpen, onToggle }) {
   const navigate = useNavigate();
   const location = useLocation();
+  
+  // Supporto retrocompatibilità: se non vengono passate props, usa stato interno
+  const [internalIsOpen, setInternalIsOpen] = useState(false);
+  const actualIsOpen = isOpen !== undefined ? isOpen : internalIsOpen;
+  const setIsOpen = onToggle || setInternalIsOpen;
 
   const menuItems = [
     { path: '/app/films', label: 'Lista Film', icon: '🎬' },
+    { path: '/app/preferiti', label: 'Preferiti', icon: '❤️' },
     { path: '/app/todos', label: 'Lista Dati JSONPlaceholder', icon: '📋' },
     { path: '/app/profilo', label: 'Profilo', icon: '👤' },
-    { path: '/app/preferiti', label: 'Preferiti', icon: '❤️' },
   ];
 
   const handleNavigate = (path) => {
@@ -28,19 +32,8 @@ export default function Sidebar() {
 
   return (
     <>
-      {/* Hamburger Button */}
-      <button
-        className="hamburger-button"
-        onClick={() => setIsOpen(!isOpen)}
-        aria-label="Menu"
-      >
-        <span className={isOpen ? 'hamburger-line open' : 'hamburger-line'}></span>
-        <span className={isOpen ? 'hamburger-line open' : 'hamburger-line'}></span>
-        <span className={isOpen ? 'hamburger-line open' : 'hamburger-line'}></span>
-      </button>
-
       {/* Overlay */}
-      {isOpen && (
+      {actualIsOpen && (
         <div 
           className="sidebar-overlay"
           onClick={() => setIsOpen(false)}
@@ -48,18 +41,7 @@ export default function Sidebar() {
       )}
 
       {/* Sidebar */}
-      <aside className={`sidebar ${isOpen ? 'open' : ''}`}>
-        <div className="sidebar-header">
-          <div className="netfilm-logo">NETFILM</div>
-          <button 
-            className="sidebar-close"
-            onClick={() => setIsOpen(false)}
-            aria-label="Chiudi menu"
-          >
-            ×
-          </button>
-        </div>
-
+      <aside className={`sidebar ${actualIsOpen ? 'open' : ''}`}>
         <nav className="sidebar-nav">
           {menuItems.map((item) => (
             <button

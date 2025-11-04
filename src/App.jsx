@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Login from './pages/Login';
+import SplashScreen from './pages/SplashScreen';
 import ProtectedRoute from './routes/ProtectedRoute';
 import Layout from './components/Layout';
 import ListaFilm from './pages/ListaFilm';
@@ -11,7 +12,7 @@ export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Navigate to="/app/films" replace />} />
+        <Route path="/" element={<SplashScreen />} />
         <Route path="/login" element={<Login />} />
         <Route
           path="/app"

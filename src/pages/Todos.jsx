@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { getTodos } from '../api/jsonplaceholder';
 import { logout, getUser } from '../utils/auth';
+import Logo from '../components/Logo';
 
 export default function Todos() {
   const [todos, setTodos] = useState([]);
@@ -59,7 +60,9 @@ export default function Todos() {
     <div style={{ minHeight: '100vh', background: 'linear-gradient(180deg, #141414 0%, #1a1a1a 100%)' }}>
       {/* Header */}
       <header className="netfilm-header">
-        <div className="netfilm-logo">NETFILM</div>
+        <div className="netfilm-logo">
+          <Logo size="normal" />
+        </div>
         <div className="dashboard-user">
           <span className="user-greeting">
             Ciao, <strong>{user?.username}</strong>

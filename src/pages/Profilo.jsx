@@ -19,7 +19,7 @@ export default function Profilo() {
               width: '120px', 
               height: '120px', 
               borderRadius: '50%', 
-              backgroundColor: '#e50914',
+              backgroundColor: '#e3b23c',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -29,29 +29,56 @@ export default function Profilo() {
             }}>
               👤
             </div>
-            <h2 style={{ fontSize: '24px', marginBottom: '8px' }}>{user?.username}</h2>
-            <p className="muted">Membro Netfilm</p>
+            <h2 style={{ fontSize: '24px', marginBottom: '8px' }}>
+              {user?.nome && user?.cognome 
+                ? `${user.nome} ${user.cognome}` 
+                : user?.username || user?.email}
+            </h2>
+            <p className="muted">{user?.email || 'Membro Netfilm'}</p>
           </div>
 
           <div style={{ borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '20px' }}>
-            <div style={{ marginBottom: '20px' }}>
-              <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', color: '#b3b3b3' }}>
-                Username
-              </label>
-              <input 
-                type="text" 
-                value={user?.username || ''} 
-                readOnly
-                style={{ 
-                  width: '100%', 
-                  padding: '12px', 
-                  backgroundColor: '#2f2f2f', 
-                  border: '1px solid rgba(255,255,255,0.2)',
-                  borderRadius: '4px',
-                  color: '#fff'
-                }}
-              />
-            </div>
+            {user?.nome && (
+              <div style={{ marginBottom: '20px' }}>
+                <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', color: '#b3b3b3' }}>
+                  Nome
+                </label>
+                <input 
+                  type="text" 
+                  value={user.nome || ''} 
+                  readOnly
+                  style={{ 
+                    width: '100%', 
+                    padding: '12px', 
+                    backgroundColor: '#2f2f2f', 
+                    border: '1px solid rgba(255,255,255,0.2)',
+                    borderRadius: '4px',
+                    color: '#fff'
+                  }}
+                />
+              </div>
+            )}
+
+            {user?.cognome && (
+              <div style={{ marginBottom: '20px' }}>
+                <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', color: '#b3b3b3' }}>
+                  Cognome
+                </label>
+                <input 
+                  type="text" 
+                  value={user.cognome || ''} 
+                  readOnly
+                  style={{ 
+                    width: '100%', 
+                    padding: '12px', 
+                    backgroundColor: '#2f2f2f', 
+                    border: '1px solid rgba(255,255,255,0.2)',
+                    borderRadius: '4px',
+                    color: '#fff'
+                  }}
+                />
+              </div>
+            )}
 
             <div style={{ marginBottom: '20px' }}>
               <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', color: '#b3b3b3' }}>
@@ -59,7 +86,8 @@ export default function Profilo() {
               </label>
               <input 
                 type="email" 
-                placeholder="email@esempio.com"
+                value={user?.email || ''}
+                readOnly
                 style={{ 
                   width: '100%', 
                   padding: '12px', 
