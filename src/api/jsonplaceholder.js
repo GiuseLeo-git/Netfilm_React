@@ -1,6 +1,6 @@
 const BASE = 'https://jsonplaceholder.typicode.com';
 
-export async function getTodos(limit = 10) {
+export async function getTodos(limit = 2) {
   const res = await fetch(`${BASE}/todos?_limit=${limit}`);
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   return res.json();

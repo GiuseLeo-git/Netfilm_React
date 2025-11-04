@@ -20,22 +20,29 @@ export default function Login() {
   };
 
   return (
-    <div className="container">
-      <div className="card">
-        <h1 style={{ marginBottom: 16 }}>Login</h1>
-        <form onSubmit={onSubmit}>
-          <label style={{ display: 'block', marginBottom: 8 }}>
+    <div className="login-container">
+      <div className="login-card">
+        <div className="login-logo">NETFILM</div>
+        <h1 className="login-title">Accedi</h1>
+        <form onSubmit={onSubmit} className="login-form">
+          <label>
             Username
             <input
+              type="text"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              placeholder="es. mario"
-              style={{ width: '100%', padding: 8, marginTop: 4 }}
+              placeholder="Inserisci il tuo username"
+              autoComplete="username"
             />
           </label>
-          {error && <div className="error" style={{ marginBottom: 8 }}>{error}</div>}
-          <button type="submit" style={{ padding: '8px 12px' }}>Entra</button>
+          {error && <div className="error">{error}</div>}
+          <button type="submit" className="login-button">
+            Entra
+          </button>
         </form>
+        <p className="muted" style={{ marginTop: 24, textAlign: 'center' }}>
+          Benvenuto su Netfilm, la tua piattaforma streaming preferita
+        </p>
       </div>
     </div>
   );
