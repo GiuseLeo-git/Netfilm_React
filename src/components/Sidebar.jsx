@@ -13,9 +13,10 @@ export default function Sidebar({ isOpen, onToggle }) {
   const setIsOpen = onToggle || setInternalIsOpen;
 
   const menuItems = [
-    { path: '/home/films', label: 'Lista Film', icon: '🎬' },
+   
+    
+    { path: '/home/todos', label: 'Lista film', icon: '📋' },
     { path: '/home/preferiti', label: 'Preferiti', icon: '❤️' },
-    { path: '/home/todos', label: 'Lista Dati JSONPlaceholder', icon: '📋' },
     { path: '/home/profilo', label: 'Profilo', icon: '👤' },
   ];
 

@@ -4,7 +4,7 @@ import SplashScreen from './pages/SplashScreen';
 import HomeWrapper from './components/HomeWrapper';
 import ProtectedRoute from './routes/ProtectedRoute';
 import Layout from './components/Layout';
-import ListaFilm from './pages/ListaFilm';
+
 import ListaTodos from './pages/ListaTodos';
 import Profilo from './pages/Profilo';
 import Preferiti from './pages/Preferiti';
@@ -16,16 +16,7 @@ export default function App() {
         <Route path="/" element={<SplashScreen />} />
         <Route path="/login" element={<Login />} />
         <Route path="/home" element={<HomeWrapper />}>
-          <Route
-            path="films"
-            element={
-              <ProtectedRoute>
-                <Layout />
-              </ProtectedRoute>
-            }
-          >
-            <Route index element={<ListaFilm />} />
-          </Route>
+          
           <Route
             path="todos"
             element={
