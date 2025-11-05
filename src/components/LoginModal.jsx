@@ -1,80 +1,50 @@
-import { useState } from 'react';
-import { login, register } from '../utils/auth';
+import { useLoginForm } from '../hooks/useLoginForm';
 import Logo from './Logo';
+import './LoginModal.css';
 
 export default function LoginModal({ isOpen, onClose, onSuccess }) {
-  const [isRegisterMode, setIsRegisterMode] = useState(false);
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
+  const handleLoginSuccess = () => {
+    setTimeout(() => {
+      onSuccess?.();
+      onClose();
+      resetForm();
+    }, 500);
+  };
 
-  // Campi login
-  const [loginEmail, setLoginEmail] = useState('');
-  const [loginPassword, setLoginPassword] = useState('');
+  const handleRegisterSuccess = () => {
+    setTimeout(() => {
+      onSuccess?.();
+      onClose();
+      resetForm();
+    }, 500);
+  };
 
-  // Campi registrazione
-  const [nome, setNome] = useState('');
-  const [cognome, setCognome] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const {
+    isRegisterMode,
+    error,
+    success,
+    loginEmail,
+    loginPassword,
+    nome,
+    cognome,
+    email,
+    password,
+    setLoginEmail,
+    setLoginPassword,
+    setNome,
+    setCognome,
+    setEmail,
+    setPassword,
+    handleLogin,
+    handleRegister,
+    toggleMode,
+    resetForm
+  } = useLoginForm({
+    onLoginSuccess: handleLoginSuccess,
+    onRegisterSuccess: handleRegisterSuccess
+  });
 
   if (!isOpen) return null;
-
-  const handleLogin = (e) => {
-    e.preventDefault();
-    setError('');
-    setSuccess('');
-
-    if (!loginEmail.trim() || !loginPassword.trim()) {
-      setError('Inserisci email e password');
-      return;
-    }
-
-    try {
-      login(loginEmail.trim(), loginPassword.trim());
-      setSuccess('Accesso completato!');
-      setTimeout(() => {
-        onSuccess?.();
-        onClose();
-        // Reset form
-        setLoginEmail('');
-        setLoginPassword('');
-      }, 500);
-    } catch (err) {
-      setError(err.message || 'Errore durante il login');
-    }
-  };
-
-  const handleRegister = (e) => {
-    e.preventDefault();
-    setError('');
-    setSuccess('');
-
-    if (!nome.trim() || !cognome.trim() || !email.trim() || !password.trim()) {
-      setError('Compila tutti i campi');
-      return;
-    }
-
-    if (password.length < 6) {
-      setError('La password deve essere di almeno 6 caratteri');
-      return;
-    }
-
-    try {
-      register(nome.trim(), cognome.trim(), email.trim(), password.trim());
-      setSuccess('Registrazione completata!');
-      setTimeout(() => {
-        onSuccess?.();
-        onClose();
-        // Reset form
-        setNome('');
-        setCognome('');
-        setEmail('');
-        setPassword('');
-      }, 500);
-    } catch (err) {
-      setError(err.message || 'Errore durante la registrazione');
-    }
-  };
 
   return (
     <div className="login-modal-overlay" onClick={onClose}>
@@ -166,17 +136,7 @@ export default function LoginModal({ isOpen, onClose, onSuccess }) {
         <div style={{ marginTop: 24, textAlign: 'center' }}>
           <button
             type="button"
-            onClick={() => {
-              setIsRegisterMode(!isRegisterMode);
-              setError('');
-              setSuccess('');
-              setLoginEmail('');
-              setLoginPassword('');
-              setNome('');
-              setCognome('');
-              setEmail('');
-              setPassword('');
-            }}
+            onClick={toggleMode}
             style={{
               background: 'transparent',
               border: 'none',
@@ -196,4 +156,6 @@ export default function LoginModal({ isOpen, onClose, onSuccess }) {
     </div>
   );
 }
+
+
 

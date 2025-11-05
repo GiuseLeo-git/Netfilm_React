@@ -3,6 +3,7 @@ import { getUser, isAuthenticated } from '../utils/auth';
 import Sidebar from './Sidebar';
 import LoginModal from './LoginModal';
 import loginImg from '../assets/login.png';
+import './Navbar.css';
 
 export default function Navbar() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);

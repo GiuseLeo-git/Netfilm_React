@@ -1,0 +1,74 @@
+/* Home Split Layout */
+body.home-page {
+  overflow: hidden;
+  height: 100vh;
+}
+
+.home-split-container {
+  margin-left: 80px;
+  width: calc(100% - 80px);
+  height: 100vh;
+  display: flex;
+  gap: 18px;
+  overflow: hidden;
+  background-color: #000000;
+  position: relative;
+}
+
+.home-left-section,
+.home-right-section {
+  flex: 1;
+  height: 100vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scroll-behavior: auto;
+  -webkit-overflow-scrolling: touch;
+  will-change: scroll-position;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  background-color: #000000;
+}
+
+.home-image-wrapper {
+  width: 100%;
+  min-height: 100vh;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.home-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Nascondi scrollbar ma mantieni funzionalità */
+.home-left-section::-webkit-scrollbar,
+.home-right-section::-webkit-scrollbar {
+  display: none;
+}
+
+.home-left-section,
+.home-right-section {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+@media (max-width: 768px) {
+  .home-split-container {
+    margin-left: 70px;
+    width: calc(100% - 70px);
+    flex-direction: column;
+  }
+
+  .home-left-section,
+  .home-right-section {
+    height: 50vh;
+  }
+}
+

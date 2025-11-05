@@ -71,6 +71,12 @@ export function logout() {
   localStorage.removeItem('user');
 }
 
+// Logout con redirect (utility centralizzata)
+export function handleLogout() {
+  logout();
+  window.location.href = '/login';
+}
+
 // Ottieni utente corrente
 export function getUser() {
   const raw = localStorage.getItem('user');

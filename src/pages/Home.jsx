@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import Navbar from '../components/Navbar';
+import './Home.css';
 import img01 from '../assets/01.jpg';
 import img02 from '../assets/02.jpg';
 import img03 from '../assets/03.jpg';

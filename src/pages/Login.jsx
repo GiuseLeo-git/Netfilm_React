@@ -1,69 +1,47 @@
-import { useState } from 'react';
-import { login, register, isAuthenticated } from '../utils/auth';
+import { isAuthenticated } from '../utils/auth';
 import { Navigate, useNavigate } from 'react-router-dom';
+import { useLoginForm } from '../hooks/useLoginForm';
 import Logo from '../components/Logo';
+import './Login.css';
 
 export default function Login() {
-  const [isRegisterMode, setIsRegisterMode] = useState(false);
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
   const navigate = useNavigate();
-
-  // Campi login
-  const [loginEmail, setLoginEmail] = useState('');
-  const [loginPassword, setLoginPassword] = useState('');
-
-  // Campi registrazione
-  const [nome, setNome] = useState('');
-  const [cognome, setCognome] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
 
   if (isAuthenticated()) return <Navigate to="/home/films" replace />;
 
-  const handleLogin = (e) => {
-    e.preventDefault();
-    setError('');
-    setSuccess('');
+  const handleLoginSuccess = () => {
+    navigate('/home/films');
+  };
 
-    if (!loginEmail.trim() || !loginPassword.trim()) {
-      setError('Inserisci email e password');
-      return;
-    }
-
-    try {
-      login(loginEmail.trim(), loginPassword.trim());
+  const handleRegisterSuccess = () => {
+    setTimeout(() => {
       navigate('/home/films');
-    } catch (err) {
-      setError(err.message || 'Errore durante il login');
-    }
+    }, 1000);
   };
 
-  const handleRegister = (e) => {
-    e.preventDefault();
-    setError('');
-    setSuccess('');
-
-    if (!nome.trim() || !cognome.trim() || !email.trim() || !password.trim()) {
-      setError('Compila tutti i campi');
-      return;
-    }
-
-    if (password.length < 6) {
-      setError('La password deve essere di almeno 6 caratteri');
-      return;
-    }
-
-    try {
-      register(nome.trim(), cognome.trim(), email.trim(), password.trim());
-      setSuccess('Registrazione completata! Reindirizzamento...');
-      setTimeout(() => {
-        navigate('/home/films');
-      }, 1000);
-    } catch (err) {
-      setError(err.message || 'Errore durante la registrazione');
-    }
-  };
+  const {
+    isRegisterMode,
+    error,
+    success,
+    loginEmail,
+    loginPassword,
+    nome,
+    cognome,
+    email,
+    password,
+    setLoginEmail,
+    setLoginPassword,
+    setNome,
+    setCognome,
+    setEmail,
+    setPassword,
+    handleLogin,
+    handleRegister,
+    toggleMode
+  } = useLoginForm({
+    onLoginSuccess: handleLoginSuccess,
+    onRegisterSuccess: handleRegisterSuccess
+  });
 
   return (
     <div className="login-container">
@@ -103,7 +81,6 @@ export default function Login() {
             </button>
           </form>
         ) : (
-          // Form Registrazione
           <form onSubmit={handleRegister} className="login-form">
             <label>
               Nome
@@ -146,7 +123,7 @@ export default function Login() {
               />
             </label>
             {error && <div className="error">{error}</div>}
-            {success && <div className="success-message">{success}</div>}
+            {success && <div className="success-message">{success || 'Registrazione completata! Reindirizzamento...'}</div>}
             <button type="submit" className="login-button">
               Registrati
             </button>
@@ -156,17 +133,7 @@ export default function Login() {
         <div style={{ marginTop: 24, textAlign: 'center' }}>
           <button
             type="button"
-            onClick={() => {
-              setIsRegisterMode(!isRegisterMode);
-              setError('');
-              setSuccess('');
-              setLoginEmail('');
-              setLoginPassword('');
-              setNome('');
-              setCognome('');
-              setEmail('');
-              setPassword('');
-            }}
+            onClick={toggleMode}
             style={{
               background: 'transparent',
               border: 'none',

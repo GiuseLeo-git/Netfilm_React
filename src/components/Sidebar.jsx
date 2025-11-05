@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { logout } from '../utils/auth';
+import { handleLogout } from '../utils/auth';
 import logoutImg from '../assets/logout.png';
+import './Sidebar.css';
 
 export default function Sidebar({ isOpen, onToggle }) {
   const navigate = useNavigate();
@@ -13,21 +14,15 @@ export default function Sidebar({ isOpen, onToggle }) {
   const setIsOpen = onToggle || setInternalIsOpen;
 
   const menuItems = [
-   
-    
-    { path: '/home/todos', label: 'Lista film', icon: '📋' },
-    { path: '/home/preferiti', label: 'Preferiti', icon: '❤️' },
-    { path: '/home/profilo', label: 'Profilo', icon: '👤' },
+    { path: '/home', label: 'Home' },
+    { path: '/home/todos', label: 'Lista film' },
+    { path: '/home/preferiti', label: 'Preferiti' },
+    { path: '/home/profilo', label: 'Profilo',  },
   ];
 
   const handleNavigate = (path) => {
     navigate(path);
     setIsOpen(false);
-  };
-
-  const handleLogout = () => {
-    logout();
-    window.location.href = '/login';
   };
 
   const isActive = (path) => location.pathname === path;
@@ -69,7 +64,7 @@ export default function Sidebar({ isOpen, onToggle }) {
         <div className="sidebar-footer">
           <button 
             className="sidebar-logout"
-            onClick={handleLogout}
+            onClick={() => handleLogout()}
           >
             <img 
               src={logoutImg} 
