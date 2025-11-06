@@ -34,8 +34,30 @@ export default function FilmDetail() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [todosForMapping, setTodosForMapping] = useState([]);
+  const [rating, setRating] = useState(() => {
+    try {
+      const stored = localStorage.getItem('filmRatings');
+      if (!stored) return {};
+      return JSON.parse(stored);
+    } catch (err) {
+      console.error('Impossibile leggere le recensioni salvate', err);
+      return {};
+    }
+  });
   
   const todoId = parseInt(id, 10);
+
+  const currentRating = rating[todoId] || 0;
+
+  function handleRate(stars) {
+    const next = { ...rating, [todoId]: stars };
+    setRating(next);
+    try {
+      localStorage.setItem('filmRatings', JSON.stringify(next));
+    } catch (err) {
+      console.error('Impossibile salvare la recensione', err);
+    }
+  }
 
   useEffect(() => {
     if (todoId) {
@@ -147,10 +169,30 @@ export default function FilmDetail() {
             <div className="film-detail-info">
               <h1 className="film-detail-title">{title}</h1>
               <div className="film-detail-meta">
-                <span className={`film-status ${todo.completed ? 'completed' : 'in-progress'}`}>
-                  {todo.completed ? '✓ Completato' : '○ In corso'}
-                </span>
-                <span className="film-id">ID: {todo.id}</span>
+                <div className="film-detail-meta-left">
+                  <span className={`film-status ${todo.completed ? 'completed' : 'in-progress'}`}>
+                    {todo.completed ? '✓ Completato' : '○ In corso'}
+                  </span>
+                  <span className="film-id">ID: {todo.id}</span>
+                </div>
+                <div className="film-detail-rating" role="radiogroup" aria-label="Valutazione film">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <button
+                      key={star}
+                      type="button"
+                      className={`film-rating-star ${currentRating >= star ? 'active' : ''}`}
+                      onClick={() => handleRate(star)}
+                      aria-label={`Valuta ${star} su 5`}
+                      aria-checked={currentRating === star}
+                      role="radio"
+                    >
+                      {currentRating >= star ? '★' : '☆'}
+                    </button>
+                  ))}
+                  <span className="film-rating-label">
+                    {currentRating ? `${currentRating} / 5` : 'Nessuna recensione'}
+                  </span>
+                </div>
               </div>
               <p className="film-detail-description">
                 Questo è il dettaglio del film "{title}" dalla lista. 

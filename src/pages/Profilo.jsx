@@ -8,15 +8,18 @@ import './Profilo.css';
 const infoFields = [
   {
     key: 'nome',
-    label: 'Nome'
+    label: 'Nome',
+    type: 'text'
   },
   {
     key: 'email',
-    label: 'Email'
+    label: 'Email',
+    type: 'email'
   },
   {
     key: 'password',
     label: 'Password',
+    type: 'password',
     formatter: () => '********'
   }
 ];
@@ -25,6 +28,10 @@ export default function Profilo() {
   const navigate = useNavigate();
   const { markLoggedOut } = useLoginModal();
   const [favorites, setFavorites] = useState(() => getFavorites());
+  const [editableUser, setEditableUser] = useState(() => getUser() || {});
+  const [editingField, setEditingField] = useState(null);
+  const [pendingValue, setPendingValue] = useState('');
+  const [saveMessage, setSaveMessage] = useState('');
 
   const user = useMemo(() => {
     const data = getUser();
@@ -51,6 +58,33 @@ export default function Profilo() {
   const handleRemoveFavorite = (id) => {
     removeFavorite(id);
     setFavorites(getFavorites());
+  };
+
+  const handleEditField = (key, currentValue) => {
+    setEditingField(key);
+    setPendingValue(currentValue || '');
+  };
+
+  const handleCancelEdit = () => {
+    setEditingField(null);
+    setPendingValue('');
+  };
+
+  const handleSaveField = () => {
+    if (!editingField) return;
+
+    const updated = {
+      ...editableUser,
+      [editingField]: pendingValue
+    };
+
+    localStorage.setItem('user', JSON.stringify(updated));
+    setEditableUser(updated);
+    setEditingField(null);
+    setPendingValue('');
+
+    setSaveMessage('Modifiche salvate');
+    setTimeout(() => setSaveMessage(''), 2000);
   };
 
   const displayName = user?.nome && user?.cognome
@@ -82,20 +116,51 @@ export default function Profilo() {
         <section className="profile-section">
           <h2 className="profile-section-title">Le mie informazioni</h2>
           <div className="profile-info-list">
-            {infoFields.map(({ key, label, formatter }) => (
-              <div key={key} className="profile-info-item">
-                <div className="profile-info-label">{label}</div>
-                <div className="profile-info-value">{formatter ? formatter(user?.[key]) : user?.[key] || 'Non specificato'}</div>
-                <button type="button" className="profile-edit-button" aria-label={`Modifica ${label}`}>
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
-                    <path d="M20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34a.9959.9959 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                </button>
-              </div>
-            ))}
+            {infoFields.map(({ key, label, formatter, type }) => {
+              const value = formatter ? formatter(editableUser[key]) : editableUser[key] || 'Non specificato';
+              const isEditing = editingField === key;
+
+              return (
+                <div key={key} className={`profile-info-item ${isEditing ? 'is-editing' : ''}`}>
+                  <div className="profile-info-label">{label}</div>
+                  <div className="profile-info-value">
+                    {isEditing ? (
+                      <input
+                        type={type}
+                        value={pendingValue}
+                        onChange={(e) => setPendingValue(e.target.value)}
+                        className="profile-info-input"
+                        placeholder={label}
+                        autoFocus
+                      />
+                    ) : (
+                      value
+                    )}
+                  </div>
+                  <div className="profile-info-actions">
+                    {isEditing ? (
+                      <>
+                        <button type="button" className="profile-edit-button" onClick={handleSaveField}>
+                          Salva
+                        </button>
+                        <button type="button" className="profile-edit-button profile-edit-cancel" onClick={handleCancelEdit}>
+                          Annulla
+                        </button>
+                      </>
+                    ) : (
+                      <button type="button" className="profile-edit-button" onClick={() => handleEditField(key, editableUser[key])}>
+                        Modifica
+                      </button>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
           </div>
-          <button type="button" className="profile-save-button">Salva modifiche</button>
+          <button type="button" className="profile-save-button" onClick={handleSaveField}>
+            Salva modifiche
+          </button>
+          {saveMessage && <div className="profile-save-message">{saveMessage}</div>}
         </section>
 
         <section className="profile-section">

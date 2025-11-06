@@ -253,18 +253,19 @@ export default function ListaTodos() {
                   placeholder="Cerca film..."
                   aria-label="Cerca film"
                 />
-                <span className="todos-search-icon">🔍</span>
               </div>
-              <select
-                value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value)}
-                aria-label="Filtra per stato"
-                className="todos-filter-select"
-              >
-                <option value="all">Tutti</option>
-                <option value="completed">Completati</option>
-                <option value="inProgress">In corso</option>
-              </select>
+              <div className="todos-filter-wrapper">
+                <select
+                  value={statusFilter}
+                  onChange={(e) => setStatusFilter(e.target.value)}
+                  aria-label="Filtra per stato"
+                  className="todos-filter-select"
+                >
+                  <option value="all">Tutti</option>
+                  <option value="completed">Completati</option>
+                  <option value="inProgress">In corso</option>
+                </select>
+              </div>
             </div>
           </div>
           <button
