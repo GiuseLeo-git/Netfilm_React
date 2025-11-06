@@ -1,32 +1,19 @@
-import { useState, useEffect } from 'react';
-import { getUser, isAuthenticated } from '../utils/auth';
+import { useEffect, useState } from 'react';
 import Sidebar from './Sidebar';
-import LoginModal from './LoginModal';
+import Logo from './Logo';
 import loginImg from '../assets/login.png';
 import './Navbar.css';
+import { useLoginModal } from '../context/LoginModalContext';
 
 export default function Navbar() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
-  const [authenticated, setAuthenticated] = useState(isAuthenticated());
-  const user = getUser();
+  const { authenticated, open } = useLoginModal();
 
-  // Aggiorna lo stato di autenticazione quando cambia
   useEffect(() => {
-    const checkAuth = () => {
-      setAuthenticated(isAuthenticated());
-    };
-    
-    // Controlla ogni volta che viene aggiornato localStorage
-    const interval = setInterval(checkAuth, 100);
-    
-    return () => clearInterval(interval);
-  }, []);
-
-  const handleLoginSuccess = () => {
-    setAuthenticated(true);
-    setIsLoginModalOpen(false);
-  };
+    if (authenticated) {
+      setIsSidebarOpen(false);
+    }
+  }, [authenticated]);
 
   return (
     <>
@@ -36,26 +23,19 @@ export default function Navbar() {
         {authenticated ? (
           // Menu hamburger per utenti autenticati (in alto)
           <button
-            className="navbar-hamburger"
+            className={`navbar-hamburger ${isSidebarOpen ? 'open' : ''}`}
             onClick={() => setIsSidebarOpen(!isSidebarOpen)}
             aria-label="Menu"
           >
-            {isSidebarOpen ? (
-              <span style={{ fontSize: '24px', color: '#fff' }}>×</span>
-            ) : (
-              <>
-                <span className="hamburger-line"></span>
-                <span className="hamburger-line"></span>
-                <span className="hamburger-line"></span>
-              </>
-            )}
+            <span className="hamburger-line"></span>
+            <span className="hamburger-line"></span>
           </button>
         ) : (
           // Icona login per utenti non autenticati (in basso)
           <div className="navbar-login-container">
             <button
               className="navbar-login-button"
-              onClick={() => setIsLoginModalOpen(true)}
+              onClick={() => open()}
               aria-label="Accedi"
               title="Accedi per navigare"
             >
@@ -68,13 +48,12 @@ export default function Navbar() {
             </button>
           </div>
         )}
+        
+        {/* Logo al centro della navbar, ruotato di 180 gradi */}
+        <div className="navbar-logo-container">
+          <Logo size="normal" animate={false} />
+        </div>
       </nav>
-
-      <LoginModal 
-        isOpen={isLoginModalOpen} 
-        onClose={() => setIsLoginModalOpen(false)}
-        onSuccess={handleLoginSuccess}
-      />
     </>
   );
 }

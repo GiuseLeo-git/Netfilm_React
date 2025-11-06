@@ -1,81 +1,94 @@
-import { useState, useEffect } from 'react';
-import { getFavorites, removeFavorite } from '../utils/favorites';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { getFavorites, removeFavorite, subscribeToFavorites } from '../utils/favorites';
+import './ListaTodos.css';
+import img01 from '../assets/57 secondi.jpg';
+import img02 from '../assets/argo.jpg';
+import img03 from '../assets/dracula.jpg';
+import img04 from '../assets/gladiatore.jpg';
+import img05 from '../assets/inception.jpg';
+import img06 from '../assets/king conqueror.jpg';
+import img07 from '../assets/Oppenheimer.jpg';
+import img08 from '../assets/prophecy.jpg';
+import img09 from '../assets/Titanic.jpg';
+import img10 from '../assets/un delitto ideale.jpg';
+
+const filmImages = {
+  1: img01,
+  2: img02,
+  3: img03,
+  4: img04,
+  5: img05,
+  6: img06,
+  7: img07,
+  8: img08,
+  9: img09,
+  10: img10
+};
 
 export default function Preferiti() {
-  const [favorites, setFavorites] = useState([]);
+  const navigate = useNavigate();
+  const [favorites, setFavorites] = useState(() => getFavorites());
 
   useEffect(() => {
-    setFavorites(getFavorites());
+    const unsubscribe = subscribeToFavorites(setFavorites);
+    return () => {
+      if (typeof unsubscribe === 'function') {
+        unsubscribe();
+      }
+    };
   }, []);
 
   const handleRemove = (id) => {
-    if (window.confirm('Rimuovere questo film dai preferiti?')) {
-      removeFavorite(id);
-      setFavorites(getFavorites());
-    }
-  };
-
-  const handleEdit = (id) => {
-    alert(`Modifica film con ID: ${id}`);
-  };
-
-  const handleDelete = (id) => {
-    if (window.confirm('Sei sicuro di voler eliminare questo film?')) {
-      alert(`Elimina film con ID: ${id}`);
-    }
+    removeFavorite(id);
+    setFavorites(getFavorites());
   };
 
   return (
     <div className="page-container">
       <div className="container">
         <h1 className="page-title">I Miei Preferiti</h1>
-        
+
         {favorites.length === 0 ? (
           <div className="card" style={{ textAlign: 'center', padding: '60px 20px' }}>
             <div style={{ fontSize: '64px', marginBottom: '20px' }}>❤️</div>
             <h2 style={{ fontSize: '24px', marginBottom: '12px' }}>Nessun preferito</h2>
             <p className="muted" style={{ fontSize: '16px' }}>
-              Aggiungi film ai preferiti dalla pagina "Lista Film" cliccando su "Aggiungi"
+              Aggiungi film ai preferiti dalla pagina "Lista Film" cliccando sull'icona a cuore.
             </p>
           </div>
         ) : (
-          <div className="favorites-list">
-            {favorites.map(film => (
-              <div key={film.id} className="card" style={{ 
-                display: 'flex', 
-                justifyContent: 'space-between', 
-                alignItems: 'center', 
-                padding: '20px', 
-                gap: '16px',
-                marginBottom: '12px'
-              }}>
-                <div style={{ flex: 1 }}>
-                  <div style={{ fontSize: '18px', fontWeight: '600', marginBottom: '8px', color: '#ffffff' }}>
-                    ❤️ {film.title}
+          <div className="todos-list">
+            {favorites.map((film) => (
+              <div key={film.id} className="todo-card">
+                <div className="todo-card-content">
+                  <div
+                    className="todo-card-image-wrapper"
+                    onClick={() => navigate(`/home/film/${film.id}`)}
+                  >
+                    <img
+                      src={film.image || filmImages[film.id] || img01}
+                      alt={film.title}
+                      className="todo-card-image"
+                    />
                   </div>
-                  <div className="muted" style={{ fontSize: '14px' }}>
-                    {film.year} • {film.genre} • ⭐ {film.rating}
+                  <div className="todo-card-info">
+                    <h3 className="todo-card-title">{film.title}</h3>
+                    <div className="todo-card-footer">
+                      <div className="todo-card-status">
+                        <span className="todo-status-badge completed">Preferito</span>
+                      </div>
+                      <div className="todo-card-actions">
+                        <button
+                          onClick={() => handleRemove(film.id)}
+                          className="todo-button todo-button-delete"
+                          style={{ flex: 'none', minWidth: '120px' }}
+                        >
+                          Rimuovi
+                        </button>
+                      </div>
+                    </div>
                   </div>
-                </div>
-                <div style={{ display: 'flex', gap: '8px', flexShrink: 0 }}>
-                  <button 
-                    onClick={() => handleEdit(film.id)}
-                    style={{ padding: '8px 16px', fontSize: '14px' }}
-                  >
-                    Modifica
-                  </button>
-                  <button 
-                    onClick={() => handleRemove(film.id)}
-                    style={{ padding: '8px 16px', fontSize: '14px', backgroundColor: '#ff9800' }}
-                  >
-                    Rimuovi
-                  </button>
-                  <button 
-                    onClick={() => handleDelete(film.id)}
-                    style={{ padding: '8px 16px', fontSize: '14px', backgroundColor: '#dc3545' }}
-                  >
-                    Elimina
-                  </button>
                 </div>
               </div>
             ))}

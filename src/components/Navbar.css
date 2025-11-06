@@ -1,6 +1,6 @@
 /* Navbar */
 .navbar {
-  background: linear-gradient(180deg, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.7) 100%);
+  background-color: #000000;
   padding: 20px 15px;
   position: fixed;
   left: 0;
@@ -19,8 +19,8 @@
 .navbar-hamburger {
   width: 45px;
   height: 45px;
-  background-color: var(--netfilm-dark);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background-color: #000000 !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
   border-radius: 8px;
   display: flex;
   flex-direction: column;
@@ -32,12 +32,24 @@
   cursor: pointer;
   flex-shrink: 0;
   margin-top: 10px;
+  position: relative;
 }
 
 .navbar-hamburger:hover {
-  background-color: var(--netfilm-gray);
-  border-color: var(--netfilm-red);
+  background-color: #000000 !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
 }
+
+.navbar-hamburger.open {
+  background-color: #000000 !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.navbar-hamburger.open:hover {
+  background-color: #000000 !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
 
 .navbar-user {
   display: none;
@@ -56,7 +68,7 @@
 .navbar-login-button {
   width: 45px;
   height: 45px;
-  background-color: var(--netfilm-dark);
+  background-color: #000000;
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 8px;
   display: flex;
@@ -70,6 +82,10 @@
 .navbar-login-button:hover {
   background-color: var(--netfilm-gray);
   border-color: var(--netfilm-red);
+}
+
+.navbar-login-button img {
+  filter: brightness(0) invert(1);
 }
 
 .navbar-login-tooltip {
@@ -100,6 +116,39 @@
   background-color: var(--netfilm-white);
   border-radius: 2px;
   transition: all 0.3s ease;
+  position: absolute;
+}
+
+.navbar-hamburger .hamburger-line:nth-child(1) {
+  transform: translateY(-3px);
+}
+
+.navbar-hamburger .hamburger-line:nth-child(2) {
+  transform: translateY(3px);
+}
+
+/* Animazione per formare la X quando la sidebar è aperta */
+.navbar-hamburger.open .hamburger-line:nth-child(1) {
+  transform: translateY(0) rotate(45deg);
+}
+
+.navbar-hamburger.open .hamburger-line:nth-child(2) {
+  transform: translateY(0) rotate(-45deg);
+}
+
+/* Logo al centro della navbar */
+.navbar-logo-container {
+  position: absolute;
+  left: 62%;
+  top: 50%;
+  transform: translate(-50%, -50%) rotate(270deg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.navbar-logo-container .animated-logo {
+  transform: scale(2.5);
 }
 
 @media (max-width: 768px) {

@@ -1,10 +1,82 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { getTodos, createTodo, patchTodo, deleteTodo } from '../api/jsonplaceholder';
+import { addFavorite, removeFavorite, getFavorites, isFavorite, subscribeToFavorites } from '../utils/favorites';
+import './ListaTodos.css';
+import img01 from '../assets/57 secondi.jpg';
+import img02 from '../assets/argo.jpg';
+import img03 from '../assets/dracula.jpg';
+import img04 from '../assets/gladiatore.jpg';
+import img05 from '../assets/inception.jpg';
+import img06 from '../assets/king conqueror.jpg';
+import img07 from '../assets/Oppenheimer.jpg';
+import img08 from '../assets/prophecy.jpg';
+import img09 from '../assets/Titanic.jpg';
+import img10 from '../assets/un delitto ideale.jpg';
+
+const filmImagesById = {
+  1: img01,
+  2: img02,
+  3: img03,
+  4: img04,
+  5: img05,
+  6: img06,
+  7: img07,
+  8: img08,
+  9: img09,
+  10: img10
+};
+
+const filmImagesByTitle = {
+  'delectus aut autem': img01,
+  'quis ut nam facilis et officia qui': img02,
+  'fugiat veniam minus': img03,
+  'et porro tempora': img04,
+  'laboriosam mollitia et enim quasi adipisci quia provident illum': img05,
+  'qui ullam ratione quibusdam voluptatem quia omnis': img06,
+  'illo expedita consequatur quia in': img07,
+  'quo adipisci enim quam ut ab': img08,
+  'molestiae perspiciatis ipsa': img09,
+  'illo est ratione doloremque quia maiores aut': img10
+};
+
+// Funzione per ottenere l'immagine corrispondente a un todo
+function getTodoImage(todoId, todos, title) {
+  const normalizedTitle = title?.trim().toLowerCase();
+  if (normalizedTitle && filmImagesByTitle[normalizedTitle]) {
+    return filmImagesByTitle[normalizedTitle];
+  }
+
+  if (!todos || todos.length === 0) {
+    // Fallback: usa l'ID direttamente
+    if (todoId <= 5) {
+      return filmImagesById[todoId] || filmImagesById[1];
+    } else {
+      return filmImagesById[todoId - 5 + 6] || filmImagesById[1];
+    }
+  }
+  
+  const todoIndex = todos.findIndex(t => t.id === todoId);
+  if (todoIndex === -1) {
+    return filmImagesById[1]; // Default
+  }
+  
+  if (todoIndex < 5) {
+    return filmImagesById[todoIndex + 1];
+  } else {
+    return filmImagesById[todoIndex - 5 + 6];
+  }
+}
 
 export default function ListaTodos() {
+  const navigate = useNavigate();
   const [todos, setTodos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [favorites, setFavorites] = useState(() => getFavorites());
+
+  const [searchQuery, setSearchQuery] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
   
   // Stati per il form di creazione
   const [showAddForm, setShowAddForm] = useState(false);
@@ -21,6 +93,30 @@ export default function ListaTodos() {
   useEffect(() => {
     loadTodos();
   }, []);
+
+  useEffect(() => {
+    const unsubscribe = subscribeToFavorites(setFavorites);
+    return () => {
+      if (typeof unsubscribe === 'function') {
+        unsubscribe();
+      }
+    };
+  }, []);
+
+  function toggleFavorite(todo, image) {
+    if (isFavorite(todo.id)) {
+      removeFavorite(todo.id);
+    } else {
+      addFavorite({
+        id: todo.id,
+        title: todo.title,
+        completed: todo.completed,
+        image
+      });
+    }
+
+    setFavorites(getFavorites());
+  }
 
   function loadTodos() {
     let active = true;
@@ -119,6 +215,11 @@ export default function ListaTodos() {
       
       // Rimuovi il todo dalla lista
       setTodos(prev => prev.filter(todo => todo.id !== id));
+
+      if (isFavorite(id)) {
+        removeFavorite(id);
+        setFavorites(getFavorites());
+      }
       
       alert('Todo eliminato con successo!');
     } catch (err) {
@@ -127,22 +228,48 @@ export default function ListaTodos() {
     }
   }
 
+  const filteredTodos = todos.filter((todo) => {
+    const matchesQuery = todo.title.toLowerCase().includes(searchQuery.trim().toLowerCase());
+    const matchesStatus =
+      statusFilter === 'all' ||
+      (statusFilter === 'completed' && todo.completed) ||
+      (statusFilter === 'inProgress' && !todo.completed);
+
+    return matchesQuery && matchesStatus;
+  });
+
   return (
     <div className="page-container">
       <div className="container">
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-          <h1 className="page-title">Lista Dati JSONPlaceholder</h1>
-          <button 
+        <div className="todos-toolbar">
+          <div className="todos-toolbar-left">
+            <h1 className="page-title">Lista Film</h1>
+            <div className="todos-filters">
+              <div className="todos-search">
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Cerca film..."
+                  aria-label="Cerca film"
+                />
+                <span className="todos-search-icon">🔍</span>
+              </div>
+              <select
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+                aria-label="Filtra per stato"
+                className="todos-filter-select"
+              >
+                <option value="all">Tutti</option>
+                <option value="completed">Completati</option>
+                <option value="inProgress">In corso</option>
+              </select>
+            </div>
+          </div>
+          <button
             onClick={() => setShowAddForm(!showAddForm)}
-            style={{ 
-              padding: '12px 24px', 
-              fontSize: '16px',
-              backgroundColor: showAddForm ? '#6c757d' : '#e3b23c',
-              border: 'none',
-              borderRadius: '4px',
-              color: '#fff',
-              cursor: 'pointer'
-            }}
+            className={`todos-add-button ${showAddForm ? 'is-open' : ''}`}
           >
             {showAddForm ? 'Annulla' : '+ Nuovo Todo'}
           </button>
@@ -230,149 +357,110 @@ export default function ListaTodos() {
         
         {!loading && !error && (
           <div className="todos-list">
-            {todos.length === 0 ? (
-              <div className="card" style={{ padding: '40px', textAlign: 'center' }}>
+            {filteredTodos.length === 0 ? (
+              <div className="todo-card" style={{ padding: '40px', textAlign: 'center' }}>
                 <p className="muted">Nessun todo disponibile</p>
               </div>
             ) : (
-              todos.map(todo => (
-                <div key={todo.id} className="card" style={{ 
-                  padding: '20px', 
-                  marginBottom: '12px'
-                }}>
-                  {editingId === todo.id ? (
-                    // Form di modifica
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                      <div>
-                        <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', color: '#b3b3b3' }}>
-                          Titolo *
-                        </label>
-                        <input
-                          type="text"
-                          value={editTitle}
-                          onChange={(e) => setEditTitle(e.target.value)}
-                          style={{
-                            width: '100%',
-                            padding: '12px',
-                            backgroundColor: '#2f2f2f',
-                            border: '1px solid rgba(255,255,255,0.2)',
-                            borderRadius: '4px',
-                            color: '#fff',
-                            fontSize: '14px'
-                          }}
-                        />
-                      </div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                        <input
-                          type="checkbox"
-                          id={`editCompleted-${todo.id}`}
-                          checked={editCompleted}
-                          onChange={(e) => setEditCompleted(e.target.checked)}
-                          style={{ width: '18px', height: '18px', cursor: 'pointer' }}
-                        />
-                        <label htmlFor={`editCompleted-${todo.id}`} style={{ fontSize: '14px', color: '#b3b3b3', cursor: 'pointer' }}>
-                          Completato
-                        </label>
-                      </div>
-                      <div style={{ display: 'flex', gap: '8px' }}>
-                        <button
-                          onClick={() => handleUpdate(todo.id)}
-                          disabled={isUpdating}
-                          style={{
-                            padding: '8px 16px',
-                            fontSize: '14px',
-                            backgroundColor: '#e3b23c',
-                            border: 'none',
-                            borderRadius: '4px',
-                            color: '#fff',
-                            cursor: isUpdating ? 'not-allowed' : 'pointer',
-                            opacity: isUpdating ? 0.6 : 1
-                          }}
-                        >
-                          {isUpdating ? 'Salvataggio...' : 'Salva'}
-                        </button>
-                        <button
-                          onClick={cancelEdit}
-                          disabled={isUpdating}
-                          style={{
-                            padding: '8px 16px',
-                            fontSize: '14px',
-                            backgroundColor: '#6c757d',
-                            border: 'none',
-                            borderRadius: '4px',
-                            color: '#fff',
-                            cursor: isUpdating ? 'not-allowed' : 'pointer'
-                          }}
-                        >
-                          Annulla
-                        </button>
-                      </div>
-                    </div>
-                  ) : (
-                    // Visualizzazione normale
-                    <div style={{ 
-                      display: 'flex', 
-                      justifyContent: 'space-between', 
-                      alignItems: 'center', 
-                      gap: '16px'
-                    }}>
-                      <div style={{ flex: 1 }}>
-                        <div style={{ fontSize: '18px', fontWeight: '600', marginBottom: '8px', color: '#ffffff' }}>
-                          {todo.title}
+              filteredTodos.map(todo => {
+                const todoImage = getTodoImage(todo.id, todos, todo.title);
+                const favorite = favorites.some((fav) => fav.id === todo.id);
+                return (
+                  <div key={todo.id} className="todo-card">
+                    {editingId === todo.id ? (
+                      // Form di modifica
+                      <div className="todo-edit-form">
+                        <div>
+                          <label className="todo-label">
+                            Titolo *
+                          </label>
+                          <input
+                            type="text"
+                            value={editTitle}
+                            onChange={(e) => setEditTitle(e.target.value)}
+                            className="todo-input"
+                          />
                         </div>
-                        <div className="muted" style={{ fontSize: '14px' }}>
-                          Stato: <span style={{ color: todo.completed ? '#4caf50' : '#ff9800', fontWeight: '600' }}>
-                            {todo.completed ? 'Completato' : 'In corso'}
-                          </span>
+                        <div className="todo-checkbox-container">
+                          <input
+                            type="checkbox"
+                            id={`editCompleted-${todo.id}`}
+                            checked={editCompleted}
+                            onChange={(e) => setEditCompleted(e.target.checked)}
+                            className="todo-checkbox"
+                          />
+                          <label htmlFor={`editCompleted-${todo.id}`} className="todo-checkbox-label">
+                            Completato
+                          </label>
+                        </div>
+                        <div className="todo-edit-buttons">
+                          <button
+                            onClick={() => handleUpdate(todo.id)}
+                            disabled={isUpdating}
+                            className="todo-button todo-button-primary"
+                          >
+                            {isUpdating ? 'Salvataggio...' : 'Salva'}
+                          </button>
+                          <button
+                            onClick={cancelEdit}
+                            disabled={isUpdating}
+                            className="todo-button todo-button-secondary"
+                          >
+                            Annulla
+                          </button>
                         </div>
                       </div>
-                      <div style={{ 
-                        width: '24px', 
-                        height: '24px', 
-                        borderRadius: '50%', 
-                        backgroundColor: todo.completed ? '#4caf50' : '#ff9800',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        flexShrink: 0,
-                        marginRight: '16px'
-                      }}>
-                        {todo.completed ? '✓' : '○'}
-                      </div>
-                      <div style={{ display: 'flex', gap: '8px', flexShrink: 0 }}>
-                        <button 
-                          onClick={() => startEdit(todo)}
-                          style={{ 
-                            padding: '8px 16px', 
-                            fontSize: '14px',
-                            backgroundColor: '#e3b23c',
-                            border: 'none',
-                            borderRadius: '4px',
-                            color: '#fff',
-                            cursor: 'pointer'
-                          }}
+                    ) : (
+                      // Visualizzazione normale con card
+                      <div className="todo-card-content">
+                        <div 
+                          className="todo-card-image-wrapper"
+                          onClick={() => navigate(`/home/film/${todo.id}`)}
                         >
-                          Modifica
-                        </button>
-                        <button 
-                          onClick={() => handleDelete(todo.id)}
-                          style={{ 
-                            padding: '8px 16px', 
-                            fontSize: '14px', 
-                            backgroundColor: '#dc3545',
-                            border: 'none',
-                            borderRadius: '4px',
-                            color: '#fff',
-                            cursor: 'pointer'
-                          }}
-                        >
-                          Elimina
-                        </button>
+                          <img 
+                            src={todoImage} 
+                            alt={todo.title} 
+                            className="todo-card-image"
+                          />
+                        </div>
+                        <div className="todo-card-info">
+                          <h3 className="todo-card-title">{todo.title}</h3>
+                          <div className="todo-card-footer">
+                            <div className="todo-card-status">
+                              <span className={`todo-status-badge ${todo.completed ? 'completed' : 'in-progress'}`}>
+                                {todo.completed ? '✓ Completato' : '○ In corso'}
+                              </span>
+                            </div>
+                            <div className="todo-card-actions">
+                              <button
+                                type="button"
+                                onClick={() => toggleFavorite(todo, todoImage)}
+                                className={`todo-favorite-button ${favorite ? 'active' : ''}`}
+                                aria-label={favorite ? 'Rimuovi dai preferiti' : 'Aggiungi ai preferiti'}
+                                title={favorite ? 'Rimuovi dai preferiti' : 'Aggiungi ai preferiti'}
+                              >
+                                {favorite ? '♥' : '♡'}
+                              </button>
+                              <button 
+                                onClick={() => startEdit(todo)}
+                                className="todo-button todo-button-edit"
+                              >
+                                Modifica
+                              </button>
+                              <button 
+                                onClick={() => handleDelete(todo.id)}
+                                className="todo-button todo-button-delete"
+                              >
+                                Elimina
+                              </button>
+                            </div>
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                  )}
-                </div>
-              ))
+                    )}
+                  </div>
+                );
+              })
             )}
           </div>
         )}

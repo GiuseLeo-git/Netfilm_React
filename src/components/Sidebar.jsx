@@ -1,12 +1,14 @@
 import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { handleLogout } from '../utils/auth';
+import { logout } from '../utils/auth';
+import { useLoginModal } from '../context/LoginModalContext';
 import logoutImg from '../assets/logout.png';
 import './Sidebar.css';
 
 export default function Sidebar({ isOpen, onToggle }) {
   const navigate = useNavigate();
   const location = useLocation();
+  const { markLoggedOut } = useLoginModal();
   
   // Supporto retrocompatibilità: se non vengono passate props, usa stato interno
   const [internalIsOpen, setInternalIsOpen] = useState(false);
@@ -39,15 +41,6 @@ export default function Sidebar({ isOpen, onToggle }) {
 
       {/* Sidebar */}
       <aside className={`sidebar ${actualIsOpen ? 'open' : ''}`}>
-        <div className="sidebar-header">
-          <button
-            className="sidebar-close"
-            onClick={() => setIsOpen(false)}
-            aria-label="Chiudi menu"
-          >
-            <span style={{ fontSize: '28px', color: '#fff', lineHeight: '1' }}>×</span>
-          </button>
-        </div>
         <nav className="sidebar-nav">
           {menuItems.map((item) => (
             <button
@@ -64,13 +57,17 @@ export default function Sidebar({ isOpen, onToggle }) {
         <div className="sidebar-footer">
           <button 
             className="sidebar-logout"
-            onClick={() => handleLogout()}
+            onClick={() => {
+              logout();
+              markLoggedOut();
+              navigate('/home');
+            }}
           >
             <img 
               src={logoutImg} 
               alt="Esci" 
               className="sidebar-icon"
-              style={{ width: '32px', height: '32px' }}
+              style={{ width: '28px', height: '28px' }}
             />
             <span className="sidebar-label">Esci</span>
           </button>
